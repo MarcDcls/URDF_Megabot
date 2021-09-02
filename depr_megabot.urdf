@@ -1,0 +1,104 @@
+<robot name="megabot">
+
+    <link name="link1">
+        <visual>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <cylinder length="1.05" radius="0.025"/>
+            </geometry>
+            <material name="blue">
+                <color rgba="0 0 0.8 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <cylinder length="1.05" radius="0.025"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="3.6"/>
+            <inertia ixx="0.33075" ixy="0.0" ixz="0.0" iyy="0.33075" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <link name="link2">
+        <visual>
+            <origin xyz="0.375 0 0" rpy="0 1.57 0"/>
+            <geometry>
+                <cylinder length="0.75" radius="0.025"/>
+            </geometry>
+            <material name="red">
+                <color rgba="0.8 0 0 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0.375 0 0" rpy="0 1.57 0"/>
+            <geometry>
+                <cylinder length="0.75" radius="0.025"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="4.0"/>
+            <inertia ixx="0.1875" ixy="0.0" ixz="0.0" iyy="0.1875" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <joint name="joint1" type="revolute">
+        <parent link="link1"/>
+        <child link="link2"/>
+        <origin xyz="0 0 0.525" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit effort="100" velocity="2" lower="-3.14" upper="3.14"/>
+    </joint>
+
+<!--    <joint name="joint2" type="prismatic">-->
+<!--        <parent link="link1"/>-->
+<!--        <child link="link2"/>-->
+<!--        <origin xyz="0 0 0.5" rpy="0 0 3.1416"/>-->
+<!--        <axis xyz="0.5 0.5 0"/>-->
+<!--        <limit effort="50" velocity="0.5" lower="0" upper="0.72"/>-->
+<!--    </joint>-->
+
+
+    <!--  <link name="link3" />-->
+    <!--  <link name="link4" />-->
+    <!--  <link name="link5" />-->
+    <!--  <link name="link6" />-->
+    <!--  <link name="link7" />-->
+
+
+    <!--  <joint name="joint2" type="revolute">-->
+    <!--    <parent link="link2"/>-->
+    <!--    <child link="link3"/>-->
+    <!--  </joint>-->
+    <!--  <joint name="joint3" type="revolute">-->
+    <!--    <parent link="link3"/>-->
+    <!--    <child link="link4"/>-->
+    <!--  </joint>-->
+    <!--  <joint name="joint4" type="revolute">-->
+    <!--    <parent link="link4"/>-->
+    <!--    <child link="link6"/>-->
+    <!--  </joint>-->
+    <!--  <joint name="joint5" type="revolute">-->
+    <!--    <parent link="link2"/>-->
+    <!--    <child link="link6"/>-->
+    <!--  </joint>-->
+    <!--  <joint name="joint6" type="revolute">-->
+    <!--    <parent link="link4"/>-->
+    <!--    <child link="link5"/>-->
+    <!--  </joint>-->
+    <!--  <joint name="joint7" type="revolute">-->
+    <!--    <parent link="link3"/>-->
+    <!--    <child link="link5"/>-->
+    <!--  </joint>-->
+    <!--  <joint name="joint8" type="revolute">-->
+    <!--    <parent link="link1"/>-->
+    <!--    <child link="link7"/>-->
+    <!--  </joint>-->
+    <!--  <joint name="joint9" type="revolute">-->
+    <!--    <parent link="link6"/>-->
+    <!--    <child link="link7"/>-->
+    <!--  </joint>-->
+
+</robot>
