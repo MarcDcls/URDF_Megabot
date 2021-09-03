@@ -9,7 +9,8 @@ planeId = p.loadURDF("plane.urdf")
 p.setGravity(0, 0, -10)
 startPos = [0, 0, 1]
 startOrientation = p.getQuaternionFromEuler([0, 0, 0])
-boxId = p.loadURDF("megabot/robot.urdf", startPos, startOrientation)
+megaId = p.loadURDF("megabot.urdf", startPos, startOrientation)
+verId = p.loadURDF("verin.urdf", startPos, startOrientation)
 
 # set the center of mass frame (loadURDF sets base link frame) startPos/Ornp.resetBasePositionAndOrientation(boxId, startPos, startOrientation)
 for i in range(10000):
