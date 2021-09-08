@@ -1,5 +1,6 @@
 {
     "documentId": "2301a4283c82201cba1277f9",
+    "verionId": "3becf5af1409ef37d525dd24",
     "outputFormat": "urdf",
     "assemblyName": "Megabot",
     "robotName": "megabot"
