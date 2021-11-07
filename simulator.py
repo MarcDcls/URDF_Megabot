@@ -13,7 +13,7 @@ class Megabot:
     def __init__(
             self,
     ):
-        self.id = p.loadURDF("megabot/robot.urdf", [0, 0, 1], p.getQuaternionFromEuler([0, 0, 0]))
+        self.id = p.loadURDF("megabot/robot.urdf", [0, 0, 0.5], p.getQuaternionFromEuler([0, 0, 0]))
         self.connectors = [[16, 8, 6, 9, 12, 17, 15, 72],
                            [34, 26, 24, 27, 30, 35, 33, 73],
                            [52, 44, 42, 45, 48, 53, 51, 74],
@@ -39,6 +39,31 @@ class Megabot:
         p.createConstraint(self.id, self.connectors[leg_id][2 * n], self.id, self.connectors[leg_id][2 * n + 1],
                            p.JOINT_POINT2POINT, axis, [0, 0, 0], [0, 0, 0])
 
+    def MoveCylinders(self, V, force):
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['0v1'], targetPosition=0.4455 - V[0] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['0v2'], targetPosition=0.4455 - V[1] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['0v3'], targetPosition=0.4455 - V[2] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['1v1'], targetPosition=0.4455 - V[3] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['1v2'], targetPosition=0.4455 - V[4] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['1v3'], targetPosition=0.4455 - V[5] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['2v1'], targetPosition=0.4455 - V[6] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['2v2'], targetPosition=0.4455 - V[7] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['2v3'], targetPosition=0.4455 - V[8] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['3v1'], targetPosition=0.4455 - V[9] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['3v2'], targetPosition=0.4455 - V[10] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
+        p.setJointMotorControl2(self.id, self.joint_name_to_id['3v3'], targetPosition=0.4455 - V[11] * 0.001,
+                                controlMode=p.POSITION_CONTROL, force=force)
 
 ################################ SIMULATION ################################
 
@@ -46,19 +71,28 @@ physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 planeId = p.loadURDF("plane.urdf")
 p.setGravity(0, 0, -10)
-robot = Megabot()
+megabot = Megabot()
+
+# friction_v = 10000
+# p.changeDynamics(megabot.id, 3, lateralFriction=friction_v)
+# p.changeDynamics(megabot.id, 21, lateralFriction=friction_v)
+# p.changeDynamics(megabot.id, 39, lateralFriction=friction_v)
+# p.changeDynamics(megabot.id, 57, lateralFriction=friction_v)
+p.changeVisualShape(megabot.id, 3, rgbaColor=(1, 0, 0, 1))
+p.changeVisualShape(megabot.id, 21, rgbaColor=(1, 0, 0, 1))
+p.changeVisualShape(megabot.id, 39, rgbaColor=(1, 0, 0, 1))
+p.changeVisualShape(megabot.id, 57, rgbaColor=(1, 0, 0, 1))
 
 for i in range(10000):
     p.stepSimulation()
 
-    # p.changeVisualShape(robot.id, 52, rgbaColor=(0., 1., 0., 1.))
-    # p.changeVisualShape(robot.id, 51, rgbaColor=(0., 1., 1., 1.))
+    if i < 10:
+        basePos = p.getBasePositionAndOrientation(megabot.id)[0]
+        p.resetBasePositionAndOrientation(megabot.id, basePos, p.getQuaternionFromEuler([0, 0, 0]))
 
-    # p.changeVisualShape(robot.id, robot.connectors[0][int(i/200)], rgbaColor=(1., 0., 0., 1.))
+    # idle position
+    megabot.MoveCylinders([535, 615, 520, 535, 615, 520, 535, 615, 520, 535, 615, 520], 10000)
 
-    # p.setJointMotorControl2(robot.id, robot.joint_name_to_id['0v31'], targetPosition=-0.0045-np.abs(np.sin(i/300)*0.2), controlMode=p.POSITION_CONTROL, force=100000)
-
-    # time.sleep(1)
     time.sleep(1. / 240.)
 
 p.disconnect()
