@@ -46,14 +46,16 @@ joint_task = solver.add_joint_task("l1_c1", 0.0)
 t: float = 0.0
 dt: float = 0.01
 
+data = {"timestamps": [], "c1": [], "c2": [], "c3": []}
+
 while True:
     viz.display(robot.state.q)
 
     robot.update_kinematics()
 
     T = T_world_base.copy()
-    T[0, 3] = np.cos(t*2)*0.2
-    T[1, 3] = np.sin(t*2)*0.2
+    T[0, 3] = np.cos(t*2)*0.1
+    T[1, 3] = np.sin(t*2)*0.1
     # T[2, 3] = np.sin(t*3)*0.1 + 0.25
     base_task.T_world_frame = T
 
@@ -70,6 +72,7 @@ while True:
     for leg in ["leg_1", "leg_2", "leg_3", "leg_4"]:
         contact = gravity_torques.add_contact()
         contact.configure(leg, "point")
+        contact.weight_forces = 1e3
         contacts[leg] = contact
 
     for leg in range(1, 5):
@@ -85,6 +88,22 @@ while True:
         c2 = result.tau[robot.get_joint_v_offset("l1_c2")]
         c3 = result.tau[robot.get_joint_v_offset("l1_c3")]
         print(f"Torques forces: {c1:.2f} {c2:.2f} {c3:.2f}")
+
+        data["timestamps"].append(t)
+        data["c1"].append(c1)
+        data["c2"].append(c2)
+        data["c3"].append(c3)
+
+        if t > 3.5:
+            import matplotlib.pyplot as plt
+            plt.plot(data["timestamps"], data["c1"], label="c1")
+            plt.plot(data["timestamps"], data["c2"], label="c2")
+            plt.plot(data["timestamps"], data["c3"], label="c3")
+            plt.xlabel("Time [s]")
+            plt.ylabel("Force [N]")
+            plt.legend()
+            plt.show()
+            exit()
 
         for leg in ["leg_1", "leg_2", "leg_3", "leg_4"]:
             T_world_leg = robot.get_T_world_frame(leg)
