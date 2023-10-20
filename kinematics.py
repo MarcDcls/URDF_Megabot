@@ -1,10 +1,9 @@
 import time
 import numpy as np
 import meshcat.transformations as tf
-from placo_utils.visualization import robot_viz, arrow_viz, robot_frame_viz, frame_viz
+from placo_utils.visualization import robot_viz, arrow_viz, robot_frame_viz, frame_viz, contacts_viz
 import megabot
 
-meshcat = True
 robot = megabot.load()
 solver = megabot.make_solver(robot)
 
@@ -24,9 +23,21 @@ for leg in range(1, 5):
     leg_task = solver.add_position_task(name, T_world_leg[:3, 3])
     leg_task.configure(name, "hard", 1.0)
 
+# Creating dynamics solver
+id = megabot.make_dynamics_solver(robot)
+id.set_static(True)
+id.enable_torque_limits(False)
+
+for leg in range(1, 5):
+    name = f"leg_{leg}"
+    T_world_leg = robot.get_T_world_frame(name)
+    leg_task = id.add_position_task(name, T_world_leg[:3, 3])
+    leg_task.configure(name, "hard", 1.0)
+    contact = id.add_unilateral_point_contact(leg_task)
+    contact.weight_forces = 1e3
+
 # Initializing the viewer
-if meshcat:
-    viz = robot_viz(robot)
+viz = robot_viz(robot)
 t: float = 0.0
 dt: float = 0.01
 start_time = time.time()
@@ -42,10 +53,13 @@ while True:
     robot.update_kinematics()
     solver.solve(True)
 
-    if meshcat:
-        viz.display(robot.state.q)
-        robot_frame_viz(robot, "base")
-        frame_viz("base_target", T, 0.5)
+    result = id.solve()
+    if result.success:
+        contacts_viz(id, ratio=1e-3, radius=0.03)
+
+    viz.display(robot.state.q)
+    robot_frame_viz(robot, "base")
+    frame_viz("base_target", T, 0.5)
 
     t += dt
     while time.time() - start_time < t:

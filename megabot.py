@@ -32,3 +32,24 @@ def make_solver(robot: placo.RobotWrapper) -> placo.KinematicsSolver:
             closing_loop.mask.set_axises("xz")
 
     return solver
+
+
+def make_dynamics_solver(robot: placo.RobotWrapper) -> placo.DynamicsSolver:
+    solver = placo.DynamicsSolver(robot)
+
+    # Adding hard closing loop constraints to match l*_cl*_1 and l*_cl*_2 in the XZ plane
+    for leg in range(1, 5):
+        # Making the r DOFs as passive (zero torque)
+        for dof in range(1, 9):
+            solver.set_passive(f"l{leg}_r{dof}", True, 0., 0.)
+
+        for cl in range(1, 5):
+            # Adding closing loop task
+            closing_loop = solver.add_relative_position_task(f"l{leg}_cl{cl}_1", f"l{leg}_cl{cl}_2", np.array([0.0, 0.0, 0.0]))
+            closing_loop.configure(f"l{leg}_cl{cl}", "hard", 1.0)
+            closing_loop.mask.set_axises("xz")
+
+            # Adding closing loop constraint
+            solver.add_relative_point_contact(closing_loop)
+
+    return solver
